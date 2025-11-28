@@ -10,9 +10,9 @@ const AcceptInvite = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
-  const { user } = useAuth(); // Lấy user hiện tại
+  const { user } = useAuth();
 
-  const [status, setStatus] = useState("idle"); // idle, processing, success, error
+  const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
   const handleAccept = async () => {

@@ -47,7 +47,7 @@ const taskSchema = new mongoose.Schema(
     ],
     isReminded: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   {

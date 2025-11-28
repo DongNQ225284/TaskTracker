@@ -2,9 +2,6 @@ import Task from "../models/taskModel.js";
 import Project from "../models/projectModel.js";
 import { v2 as cloudinary } from "cloudinary";
 
-// @desc    Create a new task
-// @route   POST /api/tasks
-// @access  Private
 // --- Helper function to check permission ---
 const checkPermission = (
   project,
@@ -94,29 +91,40 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-// @desc    Update Task (OWNER, LEADER only)
-// @route   PUT /api/tasks/:id
+// @desc    Update Task
+// @route   PUT /api/tasks/detail/:id
 export const updateTask = async (req, res) => {
   try {
-    const { title, description, priority, dueAt, assigneeId } = req.body;
+    const { title, description, priority, dueAt, assigneeId, status } =
+      req.body;
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
     const project = await Project.findById(task.projectId);
 
-    // UPDATE: Check permission
-    const canUpdate = checkPermission(project, req.user._id);
-    if (!canUpdate) {
+    // 1. Check quyền Manager (Owner/Leader)
+    const isManager = checkPermission(project, req.user._id);
+
+    // 2. Check xem người dùng hiện tại có phải là người được giao việc không
+    const isAssignee = task.assigneeId?.toString() === req.user._id.toString();
+
+    // 3. Nếu không phải Manager VÀ không phải Assignee -> Chặn
+    if (!isManager && !isAssignee) {
       return res
         .status(403)
-        .json({ message: "Only Owner/Leader can update tasks" });
+        .json({ message: "Not authorized to update this task" });
     }
 
-    task.title = title || task.title;
-    task.description = description || task.description;
-    task.priority = priority || task.priority;
-    task.dueAt = dueAt || task.dueAt;
-    task.assigneeId = assigneeId || task.assigneeId;
+    if (isManager) {
+      task.title = title || task.title;
+      task.description = description || task.description;
+      task.priority = priority || task.priority;
+      task.dueAt = dueAt || task.dueAt;
+      task.assigneeId = assigneeId || task.assigneeId;
+      task.status = status || task.status;
+    } else if (isAssignee) {
+      task.status = status || task.status;
+    }
 
     const updatedTask = await task.save();
     res.status(200).json(updatedTask);
@@ -124,7 +132,6 @@ export const updateTask = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 // @desc    Delete Task (OWNER, LEADER only)
 // @route   DELETE /api/tasks/:id
 export const deleteTask = async (req, res) => {
@@ -191,7 +198,7 @@ export const getTasksByProject = async (req, res) => {
 };
 
 // @desc    Update task status
-// @route   GET /api/tasks/:projectId
+// @route   PUT /api/tasks/:projectId
 // @access  Private
 export const updateTaskStatus = async (req, res) => {
   try {
@@ -215,8 +222,8 @@ export const getMyAssignedTasks = async (req, res) => {
   try {
     // Find tasks where assigneeId is the current user
     const tasks = await Task.find({ assigneeId: req.user._id })
-      .populate("projectId", "name") // Get project name for display
-      .sort({ dueAt: 1 }); // Sort by deadline (earlier first)
+      .populate("projectId", "name")
+      .sort({ dueAt: 1 });
 
     res.status(200).json(tasks);
   } catch (error) {
@@ -280,7 +287,6 @@ export const deleteTaskAttachment = async (req, res) => {
     }
 
     // 1. Tìm file cần xóa trong mảng attachments
-    // (Lưu ý: Mongoose subdocument có phương thức .id() để tìm theo _id con)
     const attachmentToRemove = task.attachments.id(attachmentId);
 
     if (!attachmentToRemove) {
@@ -288,8 +294,6 @@ export const deleteTaskAttachment = async (req, res) => {
     }
 
     // 2. Xóa trên Cloudinary
-    // Public ID của file trên Cloudinary có dạng: "tên_folder/tên_file"
-    // Trong config/upload.js bạn đặt folder là "task-tracker-uploads"
     const publicId = `task-tracker-uploads/${attachmentToRemove.fileName}`;
 
     try {
@@ -297,8 +301,6 @@ export const deleteTaskAttachment = async (req, res) => {
       await cloudinary.uploader.destroy(publicId);
     } catch (cloudinaryError) {
       console.error("Cloudinary delete error:", cloudinaryError);
-      // Có thể chọn: Vẫn tiếp tục xóa trong DB dù xóa trên Cloud thất bại,
-      // hoặc return lỗi. Ở đây mình chọn tiếp tục để DB sạch sẽ.
     }
 
     // 3. Xóa trong Database (Sử dụng pull để loại bỏ phần tử khỏi mảng)

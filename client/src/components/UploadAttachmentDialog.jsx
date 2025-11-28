@@ -38,14 +38,11 @@ export function UploadAttachmentDialog({ taskId, onUploadSuccess }) {
         formData.append("files", files[i]);
       }
 
-      // --- SỬA ĐOẠN NÀY ---
-      // Thêm tham số thứ 3 là config object để ghi đè header
       await api.post(`/tasks/${taskId}/attachments`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      // --------------------
 
       toast.success("Upload successful!");
       setOpen(false);
@@ -54,7 +51,6 @@ export function UploadAttachmentDialog({ taskId, onUploadSuccess }) {
       if (onUploadSuccess) onUploadSuccess();
     } catch (error) {
       console.error(error);
-      // Hiển thị lỗi chi tiết từ backend nếu có
       toast.error(error.response?.data?.message || "Upload failed");
     } finally {
       setLoading(false);
@@ -64,7 +60,6 @@ export function UploadAttachmentDialog({ taskId, onUploadSuccess }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {/* Đổi class h-6 w-6 thành h-8 w-8 và tăng kích thước icon lên 16 */}
         <Button
           variant="ghost"
           size="icon"
@@ -81,12 +76,7 @@ export function UploadAttachmentDialog({ taskId, onUploadSuccess }) {
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="grid w-full max-w-sm items-center gap-5">
             <Label htmlFor="file">Select file (Image, PDF, Doc...)</Label>
-            <Input
-              id="file"
-              type="file"
-              multiple // Cho phép chọn nhiều file
-              onChange={handleFileChange}
-            />
+            <Input id="file" type="file" multiple onChange={handleFileChange} />
           </div>
 
           <div className="flex justify-end gap-2">

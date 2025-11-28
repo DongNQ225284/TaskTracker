@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import api from "../services/api.js"; // Thêm .js để đảm bảo resolve đúng
+import api from "../services/api.js";
 import { toast } from "sonner";
 
 export function CreateTaskDialog({ projectId, members, onTaskCreated }) {

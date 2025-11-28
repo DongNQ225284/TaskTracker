@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Sub-components
 import ProjectTasks from "../components/project/ProjectTasks";
 import ProjectMembers from "../components/project/ProjectMembers";
-import ProjectSettings from "../components/project/ProjectSettings"; // <--- Import
+import ProjectSettings from "../components/project/ProjectSettings";
 
 // Icons
 import {
@@ -146,19 +146,13 @@ const ProjectDetail = () => {
 
         {/* 2. MEMBER TAB CONTENT (Placeholder) */}
         <TabsContent value="members" className="mt-6">
-          <ProjectMembers
-            project={project}
-            onUpdate={fetchProjectData} // Truyền hàm reload để cập nhật UI khi xóa member
-          />
+          <ProjectMembers project={project} onUpdate={fetchProjectData} />
         </TabsContent>
 
         {/* 3. SETTINGS TAB CONTENT (Placeholder) */}
         {isOwner && (
           <TabsContent value="settings" className="mt-6">
-            <ProjectSettings
-              project={project}
-              onUpdate={fetchProjectData} // Truyền hàm reload để cập nhật thông tin mới sửa
-            />
+            <ProjectSettings project={project} onUpdate={fetchProjectData} />
           </TabsContent>
         )}
       </Tabs>

@@ -20,13 +20,11 @@ import { toast } from "sonner";
 import api from "../services/api";
 import { Button } from "@/components/ui/button";
 
-// --- SỬA Ở ĐÂY: Thêm onTaskUpdated ---
 export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
   if (!task) return null;
 
   const [deletingId, setDeletingId] = useState(null);
 
-  // State quản lý danh sách file nội bộ để cập nhật UI ngay lập tức
   const [localAttachments, setLocalAttachments] = useState(
     task.attachments || []
   );
@@ -44,12 +42,10 @@ export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
       await api.delete(`/tasks/${task._id}/attachments/${attachmentId}`);
       toast.success("File deleted successfully");
 
-      // 1. Cập nhật UI ngay lập tức
       setLocalAttachments((prev) =>
         prev.filter((file) => file._id !== attachmentId)
       );
 
-      // 2. Gọi refresh
       if (onTaskUpdated && typeof onTaskUpdated === "function") {
         onTaskUpdated(true);
       }

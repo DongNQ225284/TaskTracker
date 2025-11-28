@@ -25,6 +25,7 @@ export function EditTaskDialog({
   onOpenChange,
   members,
   onTaskUpdated,
+  isManager,
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -102,6 +103,7 @@ export function EditTaskDialog({
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
+              disabled={!isManager}
               required
             />
           </div>
@@ -115,6 +117,7 @@ export function EditTaskDialog({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
+              disabled={!isManager}
               rows={3}
             />
           </div>
@@ -128,6 +131,7 @@ export function EditTaskDialog({
                 onValueChange={(val) =>
                   setFormData({ ...formData, priority: val })
                 }
+                disabled={!isManager}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
@@ -150,6 +154,7 @@ export function EditTaskDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, dueAt: e.target.value })
                 }
+                disabled={!isManager}
               />
             </div>
           </div>
@@ -184,6 +189,7 @@ export function EditTaskDialog({
                 onValueChange={(val) =>
                   setFormData({ ...formData, assigneeId: val })
                 }
+                disabled={!isManager}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Unassigned" />

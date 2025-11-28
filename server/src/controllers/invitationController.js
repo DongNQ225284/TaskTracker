@@ -1,8 +1,8 @@
 import Invitation from "../models/invitationModel.js";
 import Project from "../models/projectModel.js";
-import crypto from "crypto"; // Có sẵn trong Node.js để tạo token ngẫu nhiên
-import sendEmail from "../utils/sendEmail.js"; // <--- Đảm bảo đã import
-import User from "../models/userModel.js"; // <--- BẮT BUỘC PHẢI CÓ MODEL USER
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail.js";
+import User from "../models/userModel.js";
 
 // @desc    Send invitation to email
 // @route   POST /api/invitations
@@ -25,8 +25,6 @@ export const sendInvitation = async (req, res) => {
     }
 
     // 2. Check xem người này đã trong dự án chưa?
-    // --- 2. KIỂM TRA NGƯỜI ĐƯỢC MỜI ĐÃ TRONG DỰ ÁN CHƯA? ---
-
     // Bước 2a: Tìm user trong hệ thống dựa trên email
     const userToInvite = await User.findOne({ email });
 
@@ -74,10 +72,8 @@ export const sendInvitation = async (req, res) => {
         subject: "Mời tham gia dự án - Task Tracker",
         message: message,
       });
-      // console.log... (Có thể xóa log console cũ đi)
     } catch (err) {
       console.error(err);
-      // Vẫn trả về thành công để UI không bị lỗi, nhưng log lỗi ra server để check
     }
     res.status(201).json({ message: "Invitation sent to email!" });
   } catch (error) {

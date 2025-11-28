@@ -350,12 +350,12 @@ export default function ProjectTasks({
                         )}
 
                         {/* Nút Sửa */}
-                        {isManager && (
+                        {(isManager || isAssignee) && (
                           <Button
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-blue-600 hover:bg-blue-50"
-                            onClick={() => setEditingTask(task)} // Mở modal sửa
+                            onClick={() => setEditingTask(task)}
                           >
                             <Pencil size={14} />
                           </Button>
@@ -402,6 +402,7 @@ export default function ProjectTasks({
           task={editingTask}
           members={project.members}
           onTaskUpdated={onTaskUpdate}
+          isManager={isManager} // <--- THÊM DÒNG NÀY
         />
       )}
     </div>

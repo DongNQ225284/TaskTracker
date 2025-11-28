@@ -134,8 +134,6 @@ export const deleteProject = async (req, res) => {
   }
 };
 
-// ---------------- MEMBER MANAGEMENT ----------------
-
 // @desc    Remove a member (Owner only)
 // @route   DELETE /api/projects/:projectId/members/:userId
 export const removeMember = async (req, res) => {

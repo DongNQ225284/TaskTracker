@@ -103,7 +103,7 @@ const AppLayout = () => {
 
       {/* --- MAIN CONTENT --- */}
       <main className="flex-1 ml-64 p-8 overflow-y-auto h-screen">
-        <Outlet /> {/* Nơi hiển thị các trang con (Dashboard, Projects...) */}
+        <Outlet /> {/*  (Dashboard, Projects...) */}
       </main>
     </div>
   );

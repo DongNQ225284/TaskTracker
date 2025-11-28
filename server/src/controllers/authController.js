@@ -14,7 +14,6 @@ export const loginWithGoogle = async (req, res) => {
     }
 
     // 1. Xác thực Token với Firebase
-    // Nếu token giả hoặc hết hạn, hàm này sẽ throw error
     const decodedToken = await admin.auth().verifyIdToken(token);
 
     // 2. Lấy thông tin user từ token đã giải mã

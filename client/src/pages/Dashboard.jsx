@@ -36,7 +36,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Gọi song song 2 API để lấy dữ liệu
+        // 1. Lấy dữ liệu
         const [projectsRes, tasksRes] = await Promise.all([
           api.get("/projects"),
           api.get("/tasks/assigned/me"),
@@ -186,7 +186,7 @@ const Dashboard = () => {
       </div>
 
       {/* 3. Recent Projects Section */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4">
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Recent Projects</CardTitle>
@@ -223,22 +223,6 @@ const Dashboard = () => {
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        {/* Có thể thêm một widget khác ở bên phải, ví dụ: Activity Log (Optional) */}
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => navigate("/projects")}
-            >
-              <FolderKanban className="mr-2 h-4 w-4" /> Create New Project
-            </Button>
           </CardContent>
         </Card>
       </div>

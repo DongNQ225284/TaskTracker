@@ -10,10 +10,7 @@ import { Button } from "@/components/ui/button";
 const Login = () => {
   const navigate = useNavigate();
   const { login, user } = useAuth();
-
-  // Nếu đã login thì đá về Dashboard
   if (user) return <Navigate to="/dashboard" />;
-
   const handleGoogleLogin = async () => {
     try {
       // Mở popup Google
@@ -38,9 +35,7 @@ const Login = () => {
     <div className="flex h-screen w-full bg-white">
       {/* --- LEFT SIDE: Image/Branding --- */}
       <div className="hidden lg:flex w-1/2 bg-indigo-600 items-center justify-center p-12 relative overflow-hidden">
-        {/* Họa tiết trang trí đơn giản */}
         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-
         <div className="text-center text-white z-10">
           <h1 className="text-5xl font-bold mb-6">Task Tracker</h1>
           <p className="text-xl text-indigo-100 max-w-md mx-auto leading-relaxed">
@@ -54,7 +49,6 @@ const Login = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8 text-center">
           <div className="lg:hidden mb-8">
-            {/* Logo cho màn hình nhỏ */}
             <h2 className="text-3xl font-bold text-indigo-600">Task Tracker</h2>
           </div>
 
@@ -91,7 +85,6 @@ const Login = () => {
               <a href="#" className="underline hover:text-indigo-600">
                 Privacy Policy
               </a>
-              .
             </p>
           </div>
         </div>
