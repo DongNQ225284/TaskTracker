@@ -51,15 +51,16 @@ const ProjectDetail = () => {
     }
   };
 
-  const fetchTasks = async () => {
-    setTaskLoading(true);
+  const fetchTasks = async (isSilent = false) => {
+    // Thêm tham số mặc định false
+    if (!isSilent) setTaskLoading(true);
     try {
       const tasksRes = await api.get(`/tasks/${id}`);
       setTasks(tasksRes.data);
     } catch (error) {
       console.error("Failed to fetch tasks");
     } finally {
-      setTaskLoading(false);
+      if (!isSilent) setTaskLoading(false);
     }
   };
 

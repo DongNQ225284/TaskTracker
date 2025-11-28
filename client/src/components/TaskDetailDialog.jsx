@@ -15,22 +15,27 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import api from "../services/api";
 import { Button } from "@/components/ui/button";
 
+// --- SỬA Ở ĐÂY: Thêm onTaskUpdated ---
 export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
   if (!task) return null;
-  const [deletingId, setDeletingId] = useState(null); // State để loading khi đang xóa
+
+  const [deletingId, setDeletingId] = useState(null);
+
+  // State quản lý danh sách file nội bộ để cập nhật UI ngay lập tức
   const [localAttachments, setLocalAttachments] = useState(
     task.attachments || []
   );
+
+  // Đồng bộ lại khi mở task khác
   useEffect(() => {
     setLocalAttachments(task.attachments || []);
   }, [task]);
-  // Hàm xử lý xóa file
+
   const handleDeleteFile = async (attachmentId, fileName) => {
     if (!window.confirm(`Delete file "${fileName}"?`)) return;
 
@@ -38,15 +43,16 @@ export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
     try {
       await api.delete(`/tasks/${task._id}/attachments/${attachmentId}`);
       toast.success("File deleted successfully");
+
+      // 1. Cập nhật UI ngay lập tức
       setLocalAttachments((prev) =>
         prev.filter((file) => file._id !== attachmentId)
       );
-      // Gọi callback để refresh dữ liệu ở component cha
-      if (onTaskUpdated) onTaskUpdated();
 
-      // Mẹo: Nếu onTaskUpdated gọi API lấy lại toàn bộ list tasks,
-      // dialog này có thể bị đóng hoặc re-render.
-      // Nếu muốn giữ dialog mở, bạn cần đảm bảo logic ở cha xử lý đúng.
+      // 2. Gọi refresh
+      if (onTaskUpdated && typeof onTaskUpdated === "function") {
+        onTaskUpdated(true);
+      }
     } catch (error) {
       toast.error("Failed to delete file");
       console.error(error);
@@ -54,6 +60,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
       setDeletingId(null);
     }
   };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
@@ -78,6 +85,7 @@ export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
               </div>
             </div>
 
+            {/* --- PHẦN HIỂN THỊ FILE --- */}
             <div>
               <h4 className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-2">
                 <Paperclip size={16} /> Attachments ({localAttachments.length})
