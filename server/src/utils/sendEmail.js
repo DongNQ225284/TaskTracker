@@ -1,32 +1,29 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async (options) => {
+  // Sử dụng 'service: gmail' để Nodemailer tự động cấu hình
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.ethereal.email",
-    port: process.env.SMTP_PORT || 587,
-    // Logic: Nếu cổng là 465 thì dùng secure: true, ngược lại (587) là false
-    secure: Number(process.env.SMTP_PORT) === 465,
+    service: "gmail",
     auth: {
-      user: process.env.SMTP_EMAIL || "demo@ethereal.email",
-      pass: process.env.SMTP_PASSWORD || "demo_pass",
+      user: process.env.SMTP_EMAIL, // Đảm bảo biến này đúng trên Render
+      pass: process.env.SMTP_PASSWORD, // Đảm bảo là App Password 16 ký tự
     },
   });
 
   const message = {
-    from: `"Task Tracker Bot" <${
-      process.env.SMTP_EMAIL || "noreply@tasktracker.com"
-    }>`,
+    from: `"Task Tracker Bot" <${process.env.SMTP_EMAIL}>`,
     to: options.email,
     subject: options.subject,
     html: options.message,
   };
 
-  const info = await transporter.sendMail(message);
-
-  console.log(`📨 Email sent to ${options.email}: ${info.messageId}`);
-  // Log link xem trước nếu dùng Ethereal
-  if (nodemailer.getTestMessageUrl(info)) {
-    console.log("🔗 Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  try {
+    const info = await transporter.sendMail(message);
+    console.log(`📨 Email sent to ${options.email}: ${info.messageId}`);
+  } catch (error) {
+    console.error("❌ Send Email Error:", error);
+    // Ném lỗi ra để Controller bắt được
+    throw new Error(error.message);
   }
 };
 
