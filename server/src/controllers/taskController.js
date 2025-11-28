@@ -57,7 +57,7 @@ export const createTask = async (req, res) => {
       description,
       priority,
       projectId,
-      dueAt, // MongoDB stores full datetime (ISO string sent from frontend)
+      dueAt,
       assigneeId: assigneeId || null,
       status: "TODO",
     });
