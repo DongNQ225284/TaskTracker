@@ -1,17 +1,18 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async (options) => {
-  // Sử dụng 'service: gmail' để Nodemailer tự động cấu hình
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false,
     auth: {
-      user: process.env.SMTP_EMAIL, // Đảm bảo biến này đúng trên Render
-      pass: process.env.SMTP_PASSWORD, // Đảm bảo là App Password 16 ký tự
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD,
     },
   });
 
   const message = {
-    from: `"Task Tracker Bot" <${process.env.SMTP_EMAIL}>`,
+    from: `"Task Tracker" <${process.env.SMTP_EMAIL}>`,
     to: options.email,
     subject: options.subject,
     html: options.message,
@@ -22,8 +23,7 @@ const sendEmail = async (options) => {
     console.log(`📨 Email sent to ${options.email}: ${info.messageId}`);
   } catch (error) {
     console.error("❌ Send Email Error:", error);
-    // Ném lỗi ra để Controller bắt được
-    throw new Error(error.message);
+    throw error; // Ném lỗi để controller biết
   }
 };
 
