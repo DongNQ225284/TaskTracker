@@ -1,5 +1,6 @@
 import Task from "../models/taskModel.js";
 import Project from "../models/projectModel.js";
+import { v2 as cloudinary } from "cloudinary";
 
 // @desc    Create a new task
 // @route   POST /api/tasks
@@ -270,7 +271,7 @@ export const deleteTaskAttachment = async (req, res) => {
 
     const project = await Project.findById(task.projectId);
 
-    // --- PERMISSION CHECK (same as upload) ---
+    // --- PERMISSION CHECK ---
     const canDelete = checkFilePermission(project, task, req.user._id);
     if (!canDelete) {
       return res
@@ -278,18 +279,30 @@ export const deleteTaskAttachment = async (req, res) => {
         .json({ message: "Not authorized to delete files" });
     }
 
-    // Filter out the attachment with the given id
-    // Note: each file in attachments is a subdocument with its own _id
-    const initialLength = task.attachments.length;
+    // 1. Tìm file cần xóa trong mảng attachments
+    // (Lưu ý: Mongoose subdocument có phương thức .id() để tìm theo _id con)
+    const attachmentToRemove = task.attachments.id(attachmentId);
 
-    task.attachments = task.attachments.filter(
-      (att) => att._id.toString() !== attachmentId
-    );
-
-    if (task.attachments.length === initialLength) {
+    if (!attachmentToRemove) {
       return res.status(404).json({ message: "Attachment not found" });
     }
 
+    // 2. Xóa trên Cloudinary
+    // Public ID của file trên Cloudinary có dạng: "tên_folder/tên_file"
+    // Trong config/upload.js bạn đặt folder là "task-tracker-uploads"
+    const publicId = `task-tracker-uploads/${attachmentToRemove.fileName}`;
+
+    try {
+      // Gọi API xóa của Cloudinary
+      await cloudinary.uploader.destroy(publicId);
+    } catch (cloudinaryError) {
+      console.error("Cloudinary delete error:", cloudinaryError);
+      // Có thể chọn: Vẫn tiếp tục xóa trong DB dù xóa trên Cloud thất bại,
+      // hoặc return lỗi. Ở đây mình chọn tiếp tục để DB sạch sẽ.
+    }
+
+    // 3. Xóa trong Database (Sử dụng pull để loại bỏ phần tử khỏi mảng)
+    task.attachments.pull(attachmentId);
     await task.save();
 
     res.status(200).json(task);

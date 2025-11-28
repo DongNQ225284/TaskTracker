@@ -7,11 +7,53 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import { Paperclip, Calendar, User, AlignLeft } from "lucide-react";
+import {
+  Paperclip,
+  Calendar,
+  User,
+  AlignLeft,
+  Trash2,
+  Loader2,
+} from "lucide-react";
 
-export function TaskDetailDialog({ task, open, onOpenChange }) {
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import api from "../services/api";
+import { Button } from "@/components/ui/button";
+
+export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
   if (!task) return null;
+  const [deletingId, setDeletingId] = useState(null); // State để loading khi đang xóa
+  const [localAttachments, setLocalAttachments] = useState(
+    task.attachments || []
+  );
+  useEffect(() => {
+    setLocalAttachments(task.attachments || []);
+  }, [task]);
+  // Hàm xử lý xóa file
+  const handleDeleteFile = async (attachmentId, fileName) => {
+    if (!window.confirm(`Delete file "${fileName}"?`)) return;
 
+    setDeletingId(attachmentId);
+    try {
+      await api.delete(`/tasks/${task._id}/attachments/${attachmentId}`);
+      toast.success("File deleted successfully");
+      setLocalAttachments((prev) =>
+        prev.filter((file) => file._id !== attachmentId)
+      );
+      // Gọi callback để refresh dữ liệu ở component cha
+      if (onTaskUpdated) onTaskUpdated();
+
+      // Mẹo: Nếu onTaskUpdated gọi API lấy lại toàn bộ list tasks,
+      // dialog này có thể bị đóng hoặc re-render.
+      // Nếu muốn giữ dialog mở, bạn cần đảm bảo logic ở cha xử lý đúng.
+    } catch (error) {
+      toast.error("Failed to delete file");
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
@@ -38,21 +80,42 @@ export function TaskDetailDialog({ task, open, onOpenChange }) {
 
             <div>
               <h4 className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-2">
-                <Paperclip size={16} /> Attachments (
-                {task.attachments?.length || 0})
+                <Paperclip size={16} /> Attachments ({localAttachments.length})
               </h4>
-              {task.attachments?.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {task.attachments.map((file, idx) => (
-                    <a
-                      key={idx}
-                      href={file.fileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded border border-blue-100 hover:underline truncate max-w-[200px]"
+
+              {localAttachments.length > 0 ? (
+                <div className="space-y-2">
+                  {localAttachments.map((file) => (
+                    <div
+                      key={file._id}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-100 group"
                     >
-                      {file.fileName}
-                    </a>
+                      <a
+                        href={file.fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm text-blue-600 hover:underline truncate max-w-[300px]"
+                      >
+                        {file.fileName}
+                      </a>
+
+                      {/* Nút Xóa */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() =>
+                          handleDeleteFile(file._id, file.fileName)
+                        }
+                        disabled={deletingId === file._id}
+                      >
+                        {deletingId === file._id ? (
+                          <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
+                      </Button>
+                    </div>
                   ))}
                 </div>
               ) : (

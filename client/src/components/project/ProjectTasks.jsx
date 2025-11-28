@@ -390,6 +390,7 @@ export default function ProjectTasks({
           open={!!viewingTask}
           onOpenChange={(open) => !open && setViewingTask(null)}
           task={viewingTask}
+          onTaskUpdated={onTaskUpdate}
         />
       )}
 
