@@ -1,11 +1,11 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async (options) => {
-  // Cấu hình SMTP (Ví dụ dùng Ethereal để test - Không cần password thật)
-  // Nếu muốn gửi Gmail thật, thay host bằng 'smtp.gmail.com' và dùng App Password
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "smtp.ethereal.email",
     port: process.env.SMTP_PORT || 587,
+    // Logic: Nếu cổng là 465 thì dùng secure: true, ngược lại (587) là false
+    secure: Number(process.env.SMTP_PORT) === 465,
     auth: {
       user: process.env.SMTP_EMAIL || "demo@ethereal.email",
       pass: process.env.SMTP_PASSWORD || "demo_pass",
