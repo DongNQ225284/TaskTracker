@@ -22,18 +22,18 @@ import api from "../services/api";
 import { Button } from "@/components/ui/button";
 
 export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
-  if (!task) return null;
-
   const [deletingId, setDeletingId] = useState(null);
   const [fullTask, setFullTask] = useState(task);
   const [loading, setLoading] = useState(false);
 
   const [localAttachments, setLocalAttachments] = useState(
-    task.attachments || []
+    task?.attachments || []
   );
 
   // Fetch fresh data khi mở dialog
   useEffect(() => {
+    if (!open || !task?._id) return;
+
     const fetchTaskDetail = async () => {
       setLoading(true);
       try {
@@ -43,7 +43,6 @@ export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
       } catch (error) {
         console.error("Failed to load task details:", error);
         toast.error("Failed to load task details");
-        // Fallback to original task data
         setFullTask(task);
         setLocalAttachments(task.attachments || []);
       } finally {
@@ -51,10 +50,10 @@ export function TaskDetailDialog({ task, open, onOpenChange, onTaskUpdated }) {
       }
     };
 
-    if (open && task._id) {
-      fetchTaskDetail();
-    }
-  }, [open, task._id]);
+    fetchTaskDetail();
+  }, [open, task?._id]);
+
+  if (!task) return null;
 
   const handleDeleteFile = async (attachmentId, fileName) => {
     if (!window.confirm(`Delete file "${fileName}"?`)) return;
