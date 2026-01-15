@@ -1,12 +1,6 @@
-# TÀI LIỆU PHÂN TÍCH & THIẾT KẾ HỆ THỐNG
+# Task Tracker (Quản lý công việc dự án)
 
-**Dự án:** Task Tracker (Quản lý công việc dự án)
-
----
-
-## CHƯƠNG 1: TỔNG QUAN DỰ ÁN
-
-### 1.1. Mục tiêu
+## Mục tiêu
 
 Xây dựng ứng dụng web giúp các nhóm làm việc quản lý tiến độ dự án, phân chia công việc và theo dõi hạn chót (deadline) hiệu quả. Hệ thống tập trung vào:
 
@@ -14,7 +8,7 @@ Xây dựng ứng dụng web giúp các nhóm làm việc quản lý tiến đ�
 - Phân quyền rõ ràng
 - Khả năng làm việc cộng tác
 
-### 1.2. Phân quyền (Roles)
+## Phân quyền (Roles)
 
 Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
 
@@ -33,7 +27,37 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
    - Người thực hiện công việc
    - Quyền: Xem task (tùy cài đặt), cập nhật trạng thái các task được giao
 
-### 1.3. Công nghệ sử dụng
+## Các tính năng
+
+| STT | Mã          | Tính năng                    | Mô tả                                                                                 |
+| --- | ----------- | ---------------------------- | ------------------------------------------------------------------------------------- |
+| 1   | F_AUTH-01   | Đăng nhập bằng Google        | Cho phép người dùng đăng nhập hệ thống thông qua tài khoản Google.                    |
+| 2   | F_AUTH-02   | Đăng xuất hệ thống           | Cho phép người dùng đăng xuất khỏi hệ thống đang sử dụng.                             |
+| 3   | F_PROJ-01   | Tạo dự án mới                | Người dùng có quyền tạo dự án mới với tên và mô tả dự án.                             |
+| 4   | F_PROJ-02   | Xem danh sách dự án          | Người dùng xem danh sách tất cả các dự án mà họ là thành viên.                        |
+| 5   | F_PROJ-03   | Xem chi tiết dự án           | Người dùng xem thông tin chi tiết của một dự án mà họ tham gia.                       |
+| 6   | F_PROJ-04   | Cập nhật thông tin dự án     | Owner chỉnh sửa các thông tin cơ bản của dự án.                                       |
+| 7   | F_PROJ-05   | Cấu hình cài đặt dự án       | Owner cấu hình quyền xem task của Member và bật/tắt nhắc hẹn.                         |
+| 8   | F_PROJ-06   | Xóa dự án có xác nhận        | Owner xóa dự án sau khi nhập chính xác tên dự án để xác nhận.                         |
+| 9   | F_TASK-01   | Tạo công việc                | Leader hoặc Owner tạo mới công việc trong dự án.                                      |
+| 10  | F_TASK-02   | Cập nhật công việc           | Leader/Owner chỉnh sửa toàn bộ; Assignee chỉ được thay đổi trạng thái.                |
+| 11  | F_TASK-03   | Xem danh sách công việc      | Hiển thị danh sách công việc theo vai trò và cấu hình dự án.                          |
+| 12  | F_TASK-04   | Đính kèm tệp công việc       | Leader/Owner/Assignee đính kèm tệp vào công việc.                                     |
+| 13  | F_TASK-05   | Xóa tệp đính kèm             | Leader/Owner/Assignee xóa tệp đã đính kèm trong công việc.                            |
+| 14  | F_TASK-06   | Xem chi tiết công việc       | Leader/Owner/Assignee xem đầy đủ thông tin chi tiết của công việc.                    |
+| 15  | F_TASK-07   | Xóa công việc                | Leader hoặc Owner xóa công việc khỏi dự án.                                           |
+| 16  | F_TASK-08   | Gửi email nhắc hạn công việc | Hệ thống tự động gửi email nhắc nhở lúc 07:00 cho công việc sắp đến hạn hoặc quá hạn. |
+| 17  | F_MEMBER-01 | Mời thành viên vào dự án     | Owner/Leader mời người dùng mới tham gia dự án thông qua email.                       |
+| 18  | F_MEMBER-02 | Quản lý vai trò thành viên   | Owner thay đổi vai trò thành viên giữa Leader và Member.                              |
+| 19  | F_MEMBER-03 | Xóa thành viên khỏi dự án    | Owner loại bỏ một thành viên ra khỏi dự án.                                           |
+| 20  | F_MEMBER-04 | Rời khỏi dự án               | Leader hoặc Member chủ động rời khỏi dự án đang tham gia.                             |
+| 21  | F_MEMBER-05 | Tham gia dự án qua email     | Người dùng chấp nhận lời mời và tham gia dự án thông qua email.                       |
+
+## Kiến trúc
+
+Dự án được xây dựng theo kiến trúc Client - Server
+
+## Công nghệ sử dụng
 
 - **Frontend:** ReactJS, Tailwind, Shadcn
 - **Backend:** Node.js, ExpressJS
@@ -45,293 +69,5 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
 
 ---
 
-## CHƯƠNG 2: PHÂN TÍCH CHỨC NĂNG
-
-### 2.1. Phân hệ Xác thực
-
-- **Đăng nhập Google:** Người dùng đăng nhập thông qua Google OAuth.
-- **Tự động tham gia:**
-  - Nếu người dùng nhấp vào link mời tham gia dự án qua email
-  - Yêu cầu đăng nhập Google
-  - Tự động add vào dự án sau khi login thành công (validate token mời).
-
-### 2.2. Phân hệ Dự án
-
-- **Quản lý dự án:**
-
-  - Tạo dự án
-  - Xem danh sách dự án đã tham gia
-  - Cập nhật thông tin dự án
-
-- **Cài đặt dự án (Owner only):**
-
-  - Cho phép Member xem:
-    - Toàn bộ task trong dự án, hoặc
-    - Chỉ task được assign cho chính mình
-  - Bật/tắt tính năng nhắc nhở qua email
-
-- **Xóa dự án:**
-  - Yêu cầu Owner nhập **chính xác tên dự án** để xác nhận xóa
-
-### 2.3. Phân hệ Công việc
-
-- **Thông tin Task:**
-
-  - Tên
-  - Mô tả
-  - Hạn chót (Deadline)
-  - Độ ưu tiên: `Low / Medium / High`
-  - Trạng thái: `Todo / In Progress / Review / Done`
-
-- **Đính kèm file:**
-
-  - Hỗ trợ: Ảnh, PDF, Docs
-  - Lưu trên Cloudinary
-  - Giới hạn:
-    - Tối đa **5 file / task**
-    - Tối đa **5MB / file**
-
-- **Hệ thống nhắc hẹn:**
-  - Cron Job chạy lúc **07:00 AM** mỗi ngày
-  - Quét các task có hạn chót trong vòng **24h tới**
-  - Gửi email nhắc nhở đến thành viên được assign task
-
-### 2.4. Phân hệ Thành viên
-
-- **Mời thành viên:**
-
-  - Owner nhập email
-  - Hệ thống gửi email chứa link mời kèm Token (Invitation Token)
-
-- **Quản lý thành viên:**
-
-  - Chỉ Owner:
-    - Thăng chức (Member -> Leader)
-    - Giáng chức (Leader -> Member)
-    - Mời ra khỏi dự án (Remove khỏi members list)
-
-- **Rời dự án:**
-  - Thành viên có thể tự thoát dự án
-
----
-
-## CHƯƠNG 3: THIẾT KẾ CƠ SỞ DỮ LIỆU
-
-Hệ thống sử dụng **MongoDB (NoSQL)**. Dữ liệu được tổ chức thành **4 Collections** chính.  
-Chiến lược thiết kế ưu tiên **nhúng dữ liệu (Embedding)** ở bảng `Projects` để tối ưu hóa tốc độ đọc.
-
-### 3.1. Collection: `Users` (Người dùng)
-
-**Mục đích:** Lưu trữ thông tin định danh từ Google.
-
-| Tên trường (Field) | Kiểu dữ liệu (Type) | Bắt buộc | Mô tả & Ràng buộc                                       |
-| ------------------ | ------------------- | -------- | ------------------------------------------------------- |
-| `_id`              | ObjectId            | Có       | Khóa chính (Primary Key)                                |
-| `googleId`         | String              | Có       | Unique, Index. ID trả về từ Google OAuth. Dùng để login |
-| `email`            | String              | Có       | Unique. Email của người dùng                            |
-| `name`             | String              | Có       | Tên hiển thị                                            |
-| `avatarUrl`        | String              | Không    | Đường dẫn ảnh đại diện (Lấy từ Google)                  |
-| `createdAt`        | Date                | Có       | Thời gian tạo tài khoản                                 |
-
----
-
-### 3.2. Collection: `Projects` (Dự án)
-
-**Mục đích:** Lưu thông tin dự án. Danh sách thành viên được nhúng trực tiếp vào đây.
-
-| Tên trường (Field) | Kiểu dữ liệu (Type) | Bắt buộc | Mô tả & Ràng buộc                                  |
-| ------------------ | ------------------- | -------- | -------------------------------------------------- |
-| `_id`              | ObjectId            | Có       | Khóa chính                                         |
-| `name`             | String              | Có       | Tên dự án                                          |
-| `description`      | String              | Không    | Mô tả ngắn về dự án                                |
-| `ownerId`          | ObjectId            | Có       | Reference (`Users`). ID người tạo dự án            |
-| `status`           | String              | Có       | Enum: `['ACTIVE', 'ARCHIVED']`. Mặc định: `ACTIVE` |
-| `settings`         | Object              | Có       | Cấu hình dự án (xem bảng chi tiết bên dưới)        |
-| `members`          | Array of Objects    | Có       | Danh sách thành viên (xem bảng chi tiết bên dưới)  |
-| `createdAt`        | Date                | Có       | Thời gian tạo dự án                                |
-
-**Lưu ý:** Đánh **Index** tại `members.userId` để truy vấn danh sách dự án của một user nhanh chóng.
-
-#### Cấu trúc phần tử trong mảng `members`
-
-| Tên trường con | Kiểu dữ liệu | Mô tả                                 |
-| -------------- | ------------ | ------------------------------------- |
-| `userId`       | ObjectId     | Reference (`Users`). ID thành viên    |
-| `role`         | String       | Enum: `['OWNER', 'LEADER', 'MEMBER']` |
-| `joinedAt`     | Date         | Ngày tham gia vào dự án               |
-
-#### Cấu trúc object `settings`
-
-| Tên trường con            | Kiểu dữ liệu | Mô tả                                                                   |
-| ------------------------- | ------------ | ----------------------------------------------------------------------- |
-| `allowMemberViewAllTasks` | Boolean      | `true`: Member xem hết task; `false`: Chỉ xem task được giao            |
-| `enableEmailReminders`    | Boolean      | `true`: Bật tính năng gửi mail nhắc nhở tự động; `false`: Tắt tính năng |
-
----
-
-### 3.3. Collection: `Tasks` (Công việc)
-
-**Mục đích:** Lưu trữ các đầu việc trong dự án.
-
-| Tên trường (Field) | Kiểu dữ liệu (Type) | Bắt buộc | Mô tả & Ràng buộc                                                   |
-| ------------------ | ------------------- | -------- | ------------------------------------------------------------------- |
-| `_id`              | ObjectId            | Có       | Khóa chính                                                          |
-| `projectId`        | ObjectId            | Có       | Reference (`Projects`). Task thuộc dự án nào? (Index)               |
-| `title`            | String              | Có       | Tên công việc                                                       |
-| `description`      | String              | Không    | Mô tả chi tiết                                                      |
-| `status`           | String              | Có       | Enum: `['TODO', 'IN_PROGRESS', 'REVIEW', 'DONE']`. Mặc định: `TODO` |
-| `priority`         | String              | Có       | Enum: `['LOW', 'MEDIUM', 'HIGH']`. Mặc định: `MEDIUM`               |
-| `assigneeId`       | ObjectId            | Không    | Reference (`Users`). Người được giao việc. (Index)                  |
-| `dueAt`            | Date                | Không    | Hạn chót hoàn thành. (Index phục vụ Cron Job nhắc nhở)              |
-| `isReminded`       | Boolean             | Không    | `true` nếu hệ thống đã gửi mail nhắc nhở. Mặc định: `false`         |
-| `attachments`      | Array of Objects    | Không    | Danh sách file đính kèm                                             |
-
-#### Cấu trúc phần tử trong mảng `attachments`
-
-| Tên trường con | Kiểu dữ liệu | Mô tả                          |
-| -------------- | ------------ | ------------------------------ |
-| `fileName`     | String       | Tên file hiển thị              |
-| `fileUrl`      | String       | Đường dẫn file trên Cloudinary |
-| `uploadedAt`   | Date         | Thời gian upload               |
-
----
-
-### 3.4. Collection: `Invitations` (Lời mời)
-
-**Mục đích:** Quản lý các lời mời tham gia dự án gửi qua email.
-
-| Tên trường (Field) | Kiểu dữ liệu (Type) | Bắt buộc | Mô tả & Ràng buộc                                  |
-| ------------------ | ------------------- | -------- | -------------------------------------------------- |
-| `_id`              | ObjectId            | Có       | Khóa chính                                         |
-| `projectId`        | ObjectId            | Có       | Reference (`Projects`). Mời vào dự án nào?         |
-| `inviterId`        | ObjectId            | Có       | Reference (`Users`). Ai là người mời?              |
-| `email`            | String              | Có       | Email người nhận lời mời                           |
-| `role`             | String              | Có       | Vai trò dự kiến (Leader/Member)                    |
-| `token`            | String              | Có       | Unique. Chuỗi mã hóa dùng để xác thực khi bấm link |
-| `expiresAt`        | Date                | Có       | Thời gian hết hạn của link mời (Ví dụ: sau 7 ngày) |
-| `createdAt`        | Date                | Có       | Thời gian gửi lời mời                              |
-
----
-
-## CHƯƠNG 4: THIẾT KẾ API (RESTFUL SPECIFICATION)
-
-### 4.1. Auth & User
-
-| Method | Endpoint           | Mô tả                               |
-| ------ | ------------------ | ----------------------------------- |
-| POST   | `/api/auth/google` | Đăng nhập/Đăng ký bằng Google Token |
-| GET    | `/api/auth/me`     | Lấy thông tin user hiện tại         |
-
----
-
-### 4.2. Projects
-
-| Method | Endpoint            | Mô tả                                   |
-| ------ | ------------------- | --------------------------------------- |
-| GET    | `/api/projects`     | Lấy danh sách dự án đã tham gia         |
-| POST   | `/api/projects`     | Tạo dự án mới                           |
-| GET    | `/api/projects/:id` | Xem chi tiết dự án                      |
-| PATCH  | `/api/projects/:id` | Cập nhật thông tin/setting dự án        |
-| DELETE | `/api/projects/:id` | Xóa dự án (Strict Check - xác nhận tên) |
-
----
-
-### 4.3. Members (Sub-resource of Project)
-
-| Method | Endpoint                            | Mô tả               |
-| ------ | ----------------------------------- | ------------------- |
-| PATCH  | `/api/projects/:id/members/:userId` | Đổi role thành viên |
-| DELETE | `/api/projects/:id/members/:userId` | Xóa thành viên      |
-| POST   | `/api/projects/:id/leave`           | Tự rời dự án        |
-
----
-
-### 4.4. Tasks
-
-| Method | Endpoint                     | Query Params                        | Mô tả                                |
-| ------ | ---------------------------- | ----------------------------------- | ------------------------------------ |
-| GET    | `/api/tasks`                 | `projectId=...`<br>`assigneeId=...` | Lấy danh sách task theo bộ lọc       |
-| POST   | `/api/tasks`                 | -                                   | Tạo task mới                         |
-| GET    | `/api/tasks/:id`             | -                                   | Xem chi tiết task                    |
-| PATCH  | `/api/tasks/:id`             | -                                   | Cập nhật task (trạng thái/thông tin) |
-| DELETE | `/api/tasks/:id`             | -                                   | Xóa task                             |
-| POST   | `/api/tasks/:id/attachments` | -                                   | Upload file đính kèm cho task        |
-
----
-
-### 4.5. Invitations
-
-| Method | Endpoint                  | Mô tả                        |
-| ------ | ------------------------- | ---------------------------- |
-| POST   | `/api/invitations`        | Gửi email mời tham gia dự án |
-| POST   | `/api/invitations/accept` | Xác nhận tham gia qua Token  |
-
-## CHƯƠNG 5: THIẾT KẾ GIAO DIỆN (MOCKUP)
-
-Sử dụng Figma: [Liên kết](https://www.figma.com/proto/Fm6r6nqVJlxYMziiubNKkS/UI?node-id=142-399&p=f&t=x0H0Cq70FkpZrBbc-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1)
-
----
-
-## Triển khai bằng Docker
-
-Dự án đã được cấu hình để chạy toàn bộ stack (Client + Server + MongoDB) bằng Docker.
-
-- Client (React + Vite) được build và phục vụ bằng Nginx.
-- Server (Node.js/Express) kết nối tới MongoDB.
-
-### Chuẩn bị
-
-- Cài đặt Docker Desktop và đảm bảo dịch vụ đang chạy.
-
-### Thiết lập biến môi trường
-
-Tạo file `.env` tại thư mục gốc dự án với nội dung (tham khảo, tuỳ bạn điều chỉnh):
-
-```env
-# Backend runtime
-PORT=5000
-CLIENT_URL=http://localhost:8080
-
-# Cloudinary (tuỳ chọn, dùng cho upload tệp đính kèm)
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# SMTP (tuỳ chọn, dùng cho gửi email)
-SMTP_HOST=smtp.mailtrap.io
-SMTP_PORT=587
-SMTP_EMAIL=your_smtp_user
-SMTP_PASSWORD=your_smtp_password
-```
-
-Ghi chú:
-
-- `MONGO_URI` trong môi trường Docker mặc định là `mongodb://mongo:27017/tasktracker` (khai báo sẵn trong docker-compose). Bạn chỉ cần override nếu muốn dùng DB khác.
-- `CLIENT_URL` phải trùng với origin trình duyệt truy cập client (mặc định `http://localhost:8080`).
-- Client build dùng `VITE_API_URL=http://localhost:5000/api` để trình duyệt gọi backend qua cổng 5000 của máy host.
-
-### Chạy dự án bằng Docker
-
-```powershell
-docker compose build
-docker compose up -d
-```
-
-Truy cập:
-
-- Client: http://localhost:8080
-- Server API: http://localhost:5000/api
-
-Dừng dịch vụ:
-
-```powershell
-docker compose down
-```
-
-### Bảo mật dịch vụ Firebase
-
-Server mong đợi file service account tại `server/src/config/serviceAccountKey.json`. Trong môi trường production, bạn nên mount file bí mật này vào đường dẫn `/etc/secrets/serviceAccountKey.json` theo đúng logic trong mã nguồn.
-
-### Lưu trữ dữ liệu
-
-MongoDB lưu dữ liệu trong volume `mongo_data` để không mất dữ liệu khi container khởi động lại.
+> Hướng dẫn sử dụng được trình bày trong [QuickStart](\docs\QuickStart.md)  
+> Chi tiết về Phân tích & thiết kế đươc trình bày tại [Software Requirements Specification](\docs\Software_Requirements_Specification.pdf)

@@ -160,7 +160,6 @@ export const deleteTask = async (req, res) => {
             `Failed to delete file ${attachment.fileName}:`,
             cloudinaryError
           );
-          // Continue deleting other files
         }
       }
     }
@@ -270,9 +269,19 @@ export const uploadTaskAttachment = async (req, res) => {
       return res.status(400).json({ message: "No files uploaded" });
     }
 
+    // console.log(
+    //   "=== Cloudinary upload debug ===",
+    //   req.files.map((f) => ({
+    //     originalname: f.originalname,
+    //     filename: f.filename,
+    //     path: f.path,
+    //   }))
+    // );
+
     const newAttachments = req.files.map((file) => ({
       fileName: file.originalname,
       fileUrl: file.path,
+      publicId: file.filename,
       // Mongoose will automatically generate _id for each attachment subdocument
     }));
 
@@ -312,7 +321,7 @@ export const deleteTaskAttachment = async (req, res) => {
     }
 
     // 2. Xóa trên Cloudinary
-    const publicId = `task-tracker-uploads/${attachmentToRemove.fileName}`;
+    const { publicId } = attachmentToRemove;
 
     try {
       // Gọi API xóa của Cloudinary
