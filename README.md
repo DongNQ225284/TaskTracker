@@ -1,12 +1,10 @@
 # TÀI LIỆU PHÂN TÍCH & THIẾT KẾ HỆ THỐNG
 
-**Dự án:** Task Tracker (Quản lý công việc dự án)  
-**Phiên bản:** 1.0  
-**Ngày cập nhật:** 28/11/2025
+**Dự án:** Task Tracker (Quản lý công việc dự án)
 
 ---
 
-## CHƯƠNG 1: TỔNG QUAN DỰ ÁN (PROJECT OVERVIEW)
+## CHƯƠNG 1: TỔNG QUAN DỰ ÁN
 
 ### 1.1. Mục tiêu
 
@@ -14,7 +12,7 @@ Xây dựng ứng dụng web giúp các nhóm làm việc quản lý tiến đ�
 
 - Trải nghiệm người dùng tối giản
 - Phân quyền rõ ràng
-- Khả năng làm việc cộng tác (collaboration)
+- Khả năng làm việc cộng tác
 
 ### 1.2. Phân quyền (Roles)
 
@@ -28,16 +26,16 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
 2. **LEADER (Trưởng nhóm)**
 
    - Được Owner chỉ định
-   - Có quyền quản lý Task (Tạo/Sửa/Xóa/Giao việc)
-   - Không được can thiệp cấu trúc dự án (cài đặt cấp hệ thống/cấu trúc)
+   - Có quyền quản lý Task (Xem/Tạo/Sửa/Xóa)
+   - Không được can thiệp thiết lập dự án
 
 3. **MEMBER (Thành viên)**
    - Người thực hiện công việc
    - Quyền: Xem task (tùy cài đặt), cập nhật trạng thái các task được giao
 
-### 1.3. Công nghệ sử dụng (Tech Stack)
+### 1.3. Công nghệ sử dụng
 
-- **Frontend:** ReactJS
+- **Frontend:** ReactJS, Tailwind, Shadcn
 - **Backend:** Node.js, ExpressJS
 - **Database:** MongoDB (NoSQL)
 - **Dịch vụ bên thứ 3:**
@@ -47,17 +45,17 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
 
 ---
 
-## CHƯƠNG 2: PHÂN TÍCH CHỨC NĂNG (FUNCTIONAL REQUIREMENTS)
+## CHƯƠNG 2: PHÂN TÍCH CHỨC NĂNG
 
-### 2.1. Phân hệ Xác thực (Authentication)
+### 2.1. Phân hệ Xác thực
 
 - **Đăng nhập Google:** Người dùng đăng nhập thông qua Google OAuth.
 - **Tự động tham gia:**
   - Nếu người dùng nhấp vào link mời tham gia dự án qua email
-  - → Yêu cầu đăng nhập Google
-  - → Tự động add vào dự án sau khi login thành công (validate token mời).
+  - Yêu cầu đăng nhập Google
+  - Tự động add vào dự án sau khi login thành công (validate token mời).
 
-### 2.2. Phân hệ Dự án (Project)
+### 2.2. Phân hệ Dự án
 
 - **Quản lý dự án:**
 
@@ -70,12 +68,12 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
   - Cho phép Member xem:
     - Toàn bộ task trong dự án, hoặc
     - Chỉ task được assign cho chính mình
-  - Bật/tắt tính năng nhắc nhở qua email (email reminder automation)
+  - Bật/tắt tính năng nhắc nhở qua email
 
 - **Xóa dự án:**
-  - Yêu cầu Owner nhập **chính xác tên dự án** để xác nhận xóa (Strict Check)
+  - Yêu cầu Owner nhập **chính xác tên dự án** để xác nhận xóa
 
-### 2.3. Phân hệ Công việc (Task)
+### 2.3. Phân hệ Công việc
 
 - **Thông tin Task:**
 
@@ -93,12 +91,12 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
     - Tối đa **5 file / task**
     - Tối đa **5MB / file**
 
-- **Hệ thống nhắc hẹn (Automation):**
+- **Hệ thống nhắc hẹn:**
   - Cron Job chạy lúc **07:00 AM** mỗi ngày
   - Quét các task có hạn chót trong vòng **24h tới**
   - Gửi email nhắc nhở đến thành viên được assign task
 
-### 2.4. Phân hệ Thành viên (Membership)
+### 2.4. Phân hệ Thành viên
 
 - **Mời thành viên:**
 
@@ -108,19 +106,18 @@ Hệ thống hoạt động dựa trên 3 vai trò trong một dự án:
 - **Quản lý thành viên:**
 
   - Chỉ Owner:
-    - Thăng chức (Member → Leader)
-    - Giáng chức (Leader → Member)
+    - Thăng chức (Member -> Leader)
+    - Giáng chức (Leader -> Member)
     - Mời ra khỏi dự án (Remove khỏi members list)
 
 - **Rời dự án:**
   - Thành viên có thể tự thoát dự án
-  - Yêu cầu xác nhận 2 bước (Confirm dialog / nhập lại tên dự án, v.v.)
 
 ---
 
-## CHƯƠNG 3: THIẾT KẾ CƠ SỞ DỮ LIỆU (DATABASE SCHEMA)
+## CHƯƠNG 3: THIẾT KẾ CƠ SỞ DỮ LIỆU
 
-Hệ thống sử dụng **MongoDB (NoSQL)**. Dữ liệu được tổ chức thành **4 Collections** (Bộ sưu tập) chính.  
+Hệ thống sử dụng **MongoDB (NoSQL)**. Dữ liệu được tổ chức thành **4 Collections** chính.  
 Chiến lược thiết kế ưu tiên **nhúng dữ liệu (Embedding)** ở bảng `Projects` để tối ưu hóa tốc độ đọc.
 
 ### 3.1. Collection: `Users` (Người dùng)
@@ -268,3 +265,73 @@ Chiến lược thiết kế ưu tiên **nhúng dữ liệu (Embedding)** ở b�
 | ------ | ------------------------- | ---------------------------- |
 | POST   | `/api/invitations`        | Gửi email mời tham gia dự án |
 | POST   | `/api/invitations/accept` | Xác nhận tham gia qua Token  |
+
+## CHƯƠNG 5: THIẾT KẾ GIAO DIỆN (MOCKUP)
+
+Sử dụng Figma: [Liên kết](https://www.figma.com/proto/Fm6r6nqVJlxYMziiubNKkS/UI?node-id=142-399&p=f&t=x0H0Cq70FkpZrBbc-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1)
+
+---
+
+## Triển khai bằng Docker
+
+Dự án đã được cấu hình để chạy toàn bộ stack (Client + Server + MongoDB) bằng Docker.
+
+- Client (React + Vite) được build và phục vụ bằng Nginx.
+- Server (Node.js/Express) kết nối tới MongoDB.
+
+### Chuẩn bị
+
+- Cài đặt Docker Desktop và đảm bảo dịch vụ đang chạy.
+
+### Thiết lập biến môi trường
+
+Tạo file `.env` tại thư mục gốc dự án với nội dung (tham khảo, tuỳ bạn điều chỉnh):
+
+```env
+# Backend runtime
+PORT=5000
+CLIENT_URL=http://localhost:8080
+
+# Cloudinary (tuỳ chọn, dùng cho upload tệp đính kèm)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# SMTP (tuỳ chọn, dùng cho gửi email)
+SMTP_HOST=smtp.mailtrap.io
+SMTP_PORT=587
+SMTP_EMAIL=your_smtp_user
+SMTP_PASSWORD=your_smtp_password
+```
+
+Ghi chú:
+
+- `MONGO_URI` trong môi trường Docker mặc định là `mongodb://mongo:27017/tasktracker` (khai báo sẵn trong docker-compose). Bạn chỉ cần override nếu muốn dùng DB khác.
+- `CLIENT_URL` phải trùng với origin trình duyệt truy cập client (mặc định `http://localhost:8080`).
+- Client build dùng `VITE_API_URL=http://localhost:5000/api` để trình duyệt gọi backend qua cổng 5000 của máy host.
+
+### Chạy dự án bằng Docker
+
+```powershell
+docker compose build
+docker compose up -d
+```
+
+Truy cập:
+
+- Client: http://localhost:8080
+- Server API: http://localhost:5000/api
+
+Dừng dịch vụ:
+
+```powershell
+docker compose down
+```
+
+### Bảo mật dịch vụ Firebase
+
+Server mong đợi file service account tại `server/src/config/serviceAccountKey.json`. Trong môi trường production, bạn nên mount file bí mật này vào đường dẫn `/etc/secrets/serviceAccountKey.json` theo đúng logic trong mã nguồn.
+
+### Lưu trữ dữ liệu
+
+MongoDB lưu dữ liệu trong volume `mongo_data` để không mất dữ liệu khi container khởi động lại.

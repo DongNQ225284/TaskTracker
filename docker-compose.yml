@@ -1,0 +1,46 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: tasktracker-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build:
+      context: ./server
+    container_name: tasktracker-server
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/tasktracker
+      - CLIENT_URL=http://localhost:8081
+    depends_on:
+      - mongo
+    ports:
+      - "5000:5000"
+
+  client:
+    build:
+      context: ./client
+      args:
+        - VITE_API_URL=http://localhost:5000/api
+        - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+        - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+        - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+        - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
+        - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
+        - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
+    container_name: tasktracker-client
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:

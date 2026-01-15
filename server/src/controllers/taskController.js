@@ -141,7 +141,7 @@ export const deleteTask = async (req, res) => {
 
     const project = await Project.findById(task.projectId);
 
-    // UPDATE: Check permission
+    // Check permission
     const canDelete = checkPermission(project, req.user._id);
     if (!canDelete) {
       return res
@@ -149,7 +149,25 @@ export const deleteTask = async (req, res) => {
         .json({ message: "Only Owner/Leader can delete tasks" });
     }
 
+    // 1. Delete all attachments from Cloudinary
+    if (task.attachments && task.attachments.length > 0) {
+      for (const attachment of task.attachments) {
+        const publicId = `task-tracker-uploads/${attachment.fileName}`;
+        try {
+          await cloudinary.uploader.destroy(publicId);
+        } catch (cloudinaryError) {
+          console.error(
+            `Failed to delete file ${attachment.fileName}:`,
+            cloudinaryError
+          );
+          // Continue deleting other files
+        }
+      }
+    }
+
+    // 2. Delete task from MongoDB
     await task.deleteOne();
+
     res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

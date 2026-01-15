@@ -18,7 +18,12 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "task-tracker-uploads",
     resource_type: "auto",
-    public_id: (req, file) => file.originalname,
+    public_id: (req, file) => {
+      const taskId = req.params.id;
+      const timestamp = Date.now();
+      const nameWithoutExt = file.originalname.split(".")[0];
+      return `task_${taskId}_${timestamp}_${nameWithoutExt}`;
+    },
   },
 });
 

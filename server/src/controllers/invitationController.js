@@ -37,7 +37,7 @@ export const sendInvitation = async (req, res) => {
       if (isAlreadyMember) {
         return res
           .status(400)
-          .json({ message: "Thành viên này đã có trong dự án rồi" });
+          .json({ message: "This member is already in the project" });
       }
     }
     // 3. Tạo Token ngẫu nhiên
@@ -57,19 +57,18 @@ export const sendInvitation = async (req, res) => {
     const inviteUrl = `${process.env.CLIENT_URL}/accept-invite?token=${invitationToken}`;
 
     const message = `
-      <h1>Bạn được mời tham gia dự án!</h1>
-      <p>Xin chào,</p>
-      <p>Bạn đã được mời tham gia dự án tại Task Tracker.</p>
-      <p>Vai trò: <b>${role || "MEMBER"}</b></p>
+      <h1>You are invited to join the project!</h1>
+      <p>Hello,</p>
+      <p>You have been invited to join a project at Task Tracker.</p>
+      <p>Role: <b>${role || "MEMBER"}</b></p>
       <a href="${inviteUrl}" style="background:blue; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">
-        Chấp nhận lời mời
+        Accept the invitation
       </a>
-      <p>Hoặc click vào link: ${inviteUrl}</p>
     `;
     try {
       await sendEmail({
         email: email,
-        subject: "Mời tham gia dự án - Task Tracker",
+        subject: "Invite to join the project - Task Tracker",
         message: message,
       });
     } catch (err) {

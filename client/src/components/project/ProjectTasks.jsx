@@ -402,7 +402,7 @@ export default function ProjectTasks({
           task={editingTask}
           members={project.members}
           onTaskUpdated={onTaskUpdate}
-          isManager={isManager} // <--- THÊM DÒNG NÀY
+          isManager={isManager} 
         />
       )}
     </div>

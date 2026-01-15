@@ -3,10 +3,9 @@ import Task from "../models/taskModel.js";
 import sendEmail from "../utils/sendEmail.js";
 
 const startReminderCron = () => {
-  // 1. Schedule: Run at 07:00 every morning
   // Cron structure: Minute(0) Hour(7) Day(*) Month(*) Weekday(*)
-  cron.schedule("0 7 * * *", async () => {
-    console.log("🌅 DAILY CRON JOB: Start sending daily work reports...");
+  cron.schedule("58 9 * * *", async () => {
+    console.log("DAILY CRON JOB: Start sending daily work reports...");
 
     try {
       const now = new Date();
@@ -63,12 +62,20 @@ const startReminderCron = () => {
             if (shortDesc.length > 30)
               shortDesc = shortDesc.substring(0, 30) + "...";
 
+            // Get project name
+            const projectName = task.projectId?.name || "N/A";
+
             return `
             <tr style="border-bottom: 1px solid #eee;">
               <td style="padding: 10px; text-align: center;">${index + 1}</td>
               <td style="padding: 10px;">
                 <b>${task.title}</b><br/>
                 <span style="font-size: 12px; color: #666;">${shortDesc}</span>
+              </td>
+              <td style="padding: 10px;">
+                <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; display: inline-block;">
+                  📁 ${projectName}
+                </span>
               </td>
               <td style="padding: 10px;">${dueDate.toLocaleString("vi-VN")}</td>
               <td style="padding: 10px; text-align: center;">${
@@ -97,6 +104,7 @@ const startReminderCron = () => {
                   <tr style="background-color: #f8f9fa; text-align: left;">
                     <th style="padding: 10px; text-align: center;">#</th>
                     <th style="padding: 10px;">Task</th>
+                    <th style="padding: 10px;">Project</th>
                     <th style="padding: 10px;">Deadline</th>
                     <th style="padding: 10px; text-align: center;">Priority</th>
                     <th style="padding: 10px;">Status</th>
