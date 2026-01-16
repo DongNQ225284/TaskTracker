@@ -69,5 +69,5 @@ Dự án được xây dựng theo kiến trúc Client - Server
 
 ---
 
-> Hướng dẫn sử dụng được trình bày trong [QuickStart](\docs\QuickStart.md)  
-> Chi tiết về Phân tích & thiết kế đươc trình bày tại [Software Requirements Specification](\docs\Software_Requirements_Specification.pdf)
+> Hướng dẫn sử dụng được trình bày trong [QuickStart](/docs/QuickStart.md)  
+> Chi tiết về Phân tích & thiết kế đươc trình bày tại [Software Requirements Specification](/docs/Software_Requirements_Specification.pdf)

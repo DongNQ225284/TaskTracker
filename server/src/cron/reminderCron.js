@@ -4,7 +4,7 @@ import sendEmail from "../utils/sendEmail.js";
 
 const startReminderCron = () => {
   // Cron structure: Minute(0) Hour(7) Day(*) Month(*) Weekday(*)
-  cron.schedule("58 9 * * *", async () => {
+  cron.schedule("55 8 * * *", async () => {
     console.log("DAILY CRON JOB: Start sending daily work reports...");
 
     try {
