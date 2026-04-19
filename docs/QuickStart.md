@@ -1,89 +1,165 @@
 # QuickStart
 
-Hướng dẫn này giải thích cách thiết lập và chạy dự án TaskTracker cục bộ để phát triển.
+Tài liệu này hướng dẫn cách thiết lập và chạy dự án TaskTracker trên máy cục bộ để phát triển.
 
 ## Yêu cầu
 
-- Node.js (khuyến nghị v18+)
+- Node.js 18+
 - npm
 - Git
-- Tài khoản MongoDB (cục bộ) hoặc MongoDB Atlas
-- Dự án Firebase (dành cho SDK xác thực và quản trị viên)
-- (Tùy chọn) Tài khoản Cloudinary để tải tệp lên
+- MongoDB local hoặc MongoDB Atlas
+- Firebase project
+- Tài khoản Gmail để gửi mail qua App Password nếu muốn dùng tính năng email
+- (Tùy chọn) Cloudinary để tải file đính kèm
 
-## 1. Sao chép kho lưu trữ
+## 1. Clone repository
 
 ```bash
-clone git <repo-url>
+git clone https://github.com/DongNQ225284/TaskTracker
 cd TaskTracker
 ```
 
-## 2. Cài đặt phụ thuộc
+## 2. Cài đặt dependencies
 
-Cài đặt cả phụ thuộc `server` và `client`:
+Cài dependencies cho cả `server` và `client`:
 
 ```bash
 cd server
-npm i
+npm install
 
 cd ../client
-npm i
+npm install
+
 cd ..
 ```
 
-## 3. Biến môi trường
+## 3. Cấu hình biến môi trường
 
-Có hai tệp `.env` mà bạn có thể cần thiết lập:
+Dự án dùng 2 file môi trường:
 
-- `server/.env` — thông tin bí mật phía máy chủ (URI MongoDB, mã hóa bí mật JWT, thông tin tài khoản dịch vụ Firebase, khóa Cloudinary, SMTP)
+- `server/.env`: cấu hình backend
+- `client/.env`: cấu hình frontend
 
-- `client/.env` — cấu hình web Firebase hướng tới người dùng giao diện (khóa API, authDomain, projectId, storageBucket, MessenderId, appId)
+### `server/.env`
 
-Ví dụ về `server/.env`:
+Tạo file `server/.env` với nội dung mẫu:
 
-```
+```env
 PORT=5000
-MONGO_URI=<your-mongo-uri>
-JWT_SECRET=khoa_bi_mat
+MONGO_URI=mongodb://127.0.0.1:27017/tasktracker
+JWT_SECRET=replace_with_a_strong_secret
 CLIENT_URL=http://localhost:5173
 
-# Cloudinary (tùy chọn)
+# Cloudinary (tùy chọn, nhưng cần nếu muốn upload file)
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 
-# Gmail SMTP
+# Gmail SMTP (cần nếu muốn gửi thư mời / mail nhắc hạn)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_EMAIL=you@example.com
-SMTP_PASSWORD=<mật khẩu ứng dụng>
+SMTP_PASSWORD=your_app_password
 ```
 
-[Làm sao để lấy các giá trị trên?](https://chatgpt.com/)
+Giải thích nhanh:
 
-Ví dụ về `client/.env`:
+- `PORT`: cổng backend, mặc định là `5000`
+- `MONGO_URI`: chuỗi kết nối MongoDB
+- `JWT_SECRET`: secret dùng để ký JWT
+- `CLIENT_URL`: URL frontend để cấu hình CORS và tạo link mời
+- `CLOUDINARY_*`: chỉ cần khi dùng upload file
+- `SMTP_*`: chỉ cần khi dùng email
 
-```
-VITE_API_URL=http://localhost:5000/api
-VITE_FIREBASE_API_KEY=...
-VITE_FIREBASE_AUTH_DOMAIN=...
-VITE_FIREBASE_PROJECT_ID=...
-VITE_FIREBASE_STORAGE_BUCKET=...
-VITE_FIREBASE_MESSAGING_SENDER_ID=...
-VITE_FIREBASE_APP_ID=...
+### Firebase Admin cho server
 
-```
+Backend cần Firebase Admin credentials để xác thực token đăng nhập Google. Ứng dụng hiện hỗ trợ một trong các cách sau:
 
-[Làm sao để lấy các giá trị trên?](https://chatgpt.com/)
+1. Đặt file JSON tại `server/src/config/serviceAccountKey.json`
+2. Khai báo biến môi trường `FIREBASE_SERVICE_ACCOUNT` chứa toàn bộ JSON dưới dạng string
+3. Khai báo biến môi trường `GOOGLE_APPLICATION_CREDENTIALS` trỏ tới đường dẫn file JSON
+4. Trên một số môi trường deploy, dùng `/etc/secrets/serviceAccountKey.json`
 
-## 4. Bảo mật
+Khi chạy local, cách đơn giản nhất là tải service account key từ Firebase Console và đặt tại:
 
-- Không bao giờ cam kết `.env` hoặc JSON tài khoản dịch vụ vào Git.
-- Thêm các mục này vào `.gitignore`:
-
-```
-.env
+```text
 server/src/config/serviceAccountKey.json
 ```
 
-- Nếu bất kỳ thông tin bí mật nào được đẩy lên, hãy xoay vòng/thu hồi ngay lập tức (API, khóa Firebase, mật khẩu SMTP).
+Tài liệu tham khảo:
+
+- Firebase service accounts: https://firebase.google.com/docs/admin/setup
+
+### `client/.env`
+
+Tạo file `client/.env` với nội dung mẫu:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+Các biến này là Firebase Web App config dùng ở frontend.
+
+Tài liệu tham khảo:
+
+- Firebase Web setup: https://firebase.google.com/docs/web/setup
+- MongoDB connection string: https://www.mongodb.com/docs/manual/reference/connection-string/
+- Cloudinary credentials: https://cloudinary.com/documentation/finding_your_credentials_tutorial
+- Gmail App Password: https://support.google.com/accounts/answer/185833
+
+## 4. Chạy dự án
+
+Mở 2 terminal riêng.
+
+### Chạy backend
+
+```bash
+cd server
+npm run dev
+```
+
+Backend mặc định chạy tại:
+
+```text
+http://localhost:5000
+```
+
+### Chạy frontend
+
+```bash
+cd client
+npm run dev
+```
+
+Frontend mặc định chạy tại:
+
+```text
+http://localhost:5173
+```
+
+## 5. Kiểm tra nhanh
+
+- Mở `http://localhost:5173`
+- Kiểm tra backend bằng cách truy cập `http://localhost:5000/`
+- Nếu backend hoạt động đúng, endpoint gốc sẽ trả về `API is running...`
+
+## 6. Lưu ý bảo mật
+
+- Không commit file `.env`
+- Không commit `server/src/config/serviceAccountKey.json`
+- Nếu lỡ đẩy secrets lên Git, hãy rotate ngay các khóa liên quan
+
+Các mục nên có trong `.gitignore`:
+
+```gitignore
+.env
+server/src/config/serviceAccountKey.json
+node_modules/
+dist/
+```
