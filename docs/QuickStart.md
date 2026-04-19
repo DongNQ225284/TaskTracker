@@ -4,7 +4,7 @@ Tài liệu này hướng dẫn cách thiết lập và chạy dự án TaskTrac
 
 ## Yêu cầu
 
-- Node.js 18+
+- Node.js 20+
 - npm
 - Git
 - MongoDB local hoặc MongoDB Atlas
